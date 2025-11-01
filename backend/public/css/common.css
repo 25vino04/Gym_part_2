@@ -1,0 +1,176 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+header {
+    background-color: #2C3E50;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+    gap: 1rem;
+}
+
+.logo a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.nav-links {
+    display: flex;
+    gap: 1rem;
+}
+
+.nav-btn {
+    background-color: white;
+    color: #2C3E50;
+    padding: 0.5rem 1.5rem;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.nav-btn:hover,
+.nav-btn.active {
+    background-color: #3498db;
+    color: white;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: white;
+}
+
+.logout-btn {
+    background-color: #e74c3c;
+    color: white;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.login-btn {
+    background-color: #3498db;
+    color: white;
+    padding: 0.5rem 1.5rem;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+/* Mobile menu button */
+.mobile-menu-toggle {
+    display: none;
+    background: transparent;
+    border: 1px solid white;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    color: white;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 40px;
+}
+
+.mobile-menu-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.mobile-menu-toggle .burger {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.mobile-menu-toggle .burger span {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: white;
+    border-radius: 2px;
+}
+
+.mobile-menu-toggle .label {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+/* Footer */
+footer {
+    background-color: #2C3E50;
+    padding: 2rem;
+    margin-top: auto;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.footer-links a {
+    color: white;
+    text-decoration: none;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .top-nav {
+        flex-wrap: wrap;
+    }
+
+    .mobile-menu-toggle {
+        display: inline-flex;
+    }
+
+    .top-nav .nav-links,
+    .top-nav .login-btn,
+    .top-nav .logout-btn {
+        display: none;
+    }
+
+    .top-nav.open .nav-links {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        padding-top: 0.5rem;
+    }
+
+    .top-nav.open .login-btn,
+    .top-nav.open .logout-btn {
+        display: inline-block;
+        margin-top: 0.5rem;
+    }
+
+    .top-nav.open .nav-btn {
+        width: 100%;
+        text-align: center;
+    }
+}

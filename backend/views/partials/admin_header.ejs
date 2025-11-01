@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %> - High Street Gym Admin
+    </title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+
+<body>
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">☰</button>
+
+
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <div class="admin-layout">
+
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-header">
+                <h2>Admin Panel</h2>
+                <% if (locals.user) { %>
+                    <p>Welcome, <%= user.first_name %>
+                    </p>
+                    <% } else { %>
+                        <p>Welcome, Admin</p>
+                        <% } %>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="/admin/dashboard" class="nav-item">
+                    <span class="icon">📊</span> Dashboard
+                </a>
+                <a href="/users" class="nav-item">
+                    <span class="icon">👥</span> Users
+                </a>
+                <a href="/sessions" class="nav-item">
+                    <span class="icon">📅</span> Sessions
+                </a>
+                <a href="/bookings" class="nav-item">
+                    <span class="icon">📝</span> Bookings
+                </a>
+                <a href="/activities" class="nav-item">
+                    <span class="icon">💪</span> Activities
+                </a>
+                <a href="/locations" class="nav-item">
+                    <span class="icon">📍</span> Locations
+                </a>
+                <a href="/posts" class="nav-item">
+                    <span class="icon">📰</span> Blog Posts
+                </a>
+
+                <hr>
+
+                <a href="/" class="nav-item">
+                    <span class="icon">🏠</span> Back to Site
+                </a>
+                <a href="/logout" class="nav-item logout">
+                    <span class="icon">🚪</span> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-content">

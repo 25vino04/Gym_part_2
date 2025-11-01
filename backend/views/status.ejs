@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= status %> - High Street Gym
+    </title>
+    <link rel="stylesheet" href="/css/common.css">
+    <style>
+        .status-container {
+            max-width: 600px;
+            margin: 100px auto;
+            padding: 40px;
+            text-align: center;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .status-title {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .status-message {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .status-error {
+            color: #dc3545;
+        }
+
+        .btn-back {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .btn-back:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <%- include('partials/nav') %>
+    </header>
+
+    <main>
+        <div class="status-container">
+            <div class="status-icon">
+                <% if (status==='Error' || status==='Not found' || status==='DB error' ) { %>
+                    ❌
+                    <% } else { %>
+                        ✅
+                        <% } %>
+            </div>
+            <h1 class="status-title <%= status.includes('Error') || status.includes('error') ? 'status-error' : '' %>">
+                <%= status %>
+            </h1>
+            <p class="status-message">
+                <%= message %>
+            </p>
+            <a href="javascript:history.back()" class="btn-back">Go Back</a>
+            <% if (locals.user && user.role==='admin' ) { %>
+                <a href="/admin/dashboard" class="btn-back" style="margin-left: 10px;">Admin Dashboard</a>
+                <% } %>
+        </div>
+    </main>
+
+    <footer>
+        <%- include('partials/footer') %>
+    </footer>
+</body>
+
+</html>

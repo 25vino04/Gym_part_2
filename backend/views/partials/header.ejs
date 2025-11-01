@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="High Street Gym Management System">
+    <title>
+        <%= title || 'High Street Gym' %>
+    </title>
+
+
+    <link rel="stylesheet" href="/css/styles.css">
+
+
+    <link rel="stylesheet" href="/css/accessibility.css">
+</head>
+
+<body>
+
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="/images/logo.png" alt="High Street Gym Logo">
+                <h1>High Street Gym</h1>
+            </div>
+
+
+            <% if (locals.user) { %>
+                <div class="user-info">
+                    <span>Welcome, <%= user.first_name %></span>
+                    <span class="role-badge <%= user.role %>">
+                        <%= user.role %>
+                    </span>
+                </div>
+                <% } %>
+        </div>
+    </header>

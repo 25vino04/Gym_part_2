@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trainer Dashboard - High Street Gym</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/trainer-dashboard.css">
+</head>
+
+<body>
+    <header>
+        <%- include('partials/nav') %>
+    </header>
+
+    <main class="dashboard-container">
+        <div class="page-header">
+            <h1>Welcome, <%= user.first_name %>!</h1>
+            <p>Trainer Dashboard</p>
+        </div>
+
+        <!-- Success/Error messages -->
+        <% if (locals.success==='session_created' ) { %>
+            <div class="success-message">✅ Session created successfully</div>
+            <% } else if (locals.success==='session_updated' ) { %>
+                <div class="success-message">✅ Session updated successfully</div>
+                <% } else if (locals.success==='session_deleted' ) { %>
+                    <div class="success-message">✅ Session deleted successfully</div>
+                    <% } %>
+
+                        <% if (locals.error) { %>
+                            <div class="error-message">❌ <%= error %>
+                            </div>
+                            <% } %>
+
+                                <!-- Quick Actions -->
+                                <section class="dashboard-section">
+                                    <h2>Quick Actions</h2>
+                                    <div class="actions-grid">
+                                        <a href="/blog" class="action-link">
+                                            <span class="action-icon">📝</span>
+                                            <h3>View Blog</h3>
+                                            <p>See member posts and updates</p>
+                                        </a>
+                                        <a href="/timetable" class="action-link">
+                                            <span class="action-icon">📅</span>
+                                            <h3>View Timetable</h3>
+                                            <p>See all gym sessions</p>
+                                        </a>
+                                    </div>
+                                </section>
+
+                                <!-- Create/Edit Session Form -->
+                                <section class="dashboard-section">
+                                    <h2>
+                                        <%= (selectedSession && selectedSession.id) ? "Edit Session"
+                                            : "Create New Session" %>
+                                    </h2>
+
+                                    <form method="POST"
+                                        action="/trainer/sessions/<%= (selectedSession && selectedSession.id) || '' %>"
+                                        class="session-form">
+                                        <input type="hidden" name="action"
+                                            value="<%= (selectedSession && selectedSession.id) ? 'update' : 'create' %>">
+
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label>Activity: *
+                                                    <select name="activity_id" required>
+                                                        <option value="">-- Choose Activity --</option>
+                                                        <% (activities || []).forEach(a=> { %>
+                                                            <option value="<%= a.id %>"
+                                                                <%=(selectedSession?.activity_id==a.id) ? 'selected'
+                                                                : '' %>>
+                                                                <%= a.name %>
+                                                            </option>
+                                                            <% }) %>
+                                                    </select>
+                                                </label>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Location: *
+                                                    <select name="location_id" required>
+                                                        <option value="">-- Choose Location --</option>
+                                                        <% (locations || []).forEach(l=> { %>
+                                                            <option value="<%= l.id %>"
+                                                                <%=(selectedSession?.location_id==l.id) ? 'selected'
+                                                                : '' %>>
+                                                                <%= l.name %>
+                                                            </option>
+                                                            <% }) %>
+                                                    </select>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label>Date: *
+                                                    <input type="date" name="date"
+                                                        value="<%= selectedSession?.date || '' %>" required>
+                                                </label>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Max Capacity: *
+                                                    <input type="number" name="max_capacity"
+                                                        value="<%= selectedSession?.max_capacity ?? 20 %>" min="1"
+                                                        required>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label>Start Time: *
+                                                    <input type="time" name="start_time"
+                                                        value="<%= selectedSession?.start_time ? selectedSession.start_time.substring(0, 5) : '' %>"
+                                                        required>
+                                                </label>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>End Time: *
+                                                    <input type="time" name="end_time"
+                                                        value="<%= selectedSession?.end_time ? selectedSession.end_time.substring(0, 5) : '' %>"
+                                                        required>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group full-width">
+                                            <label>Special Notes:
+                                                <textarea name="special_notes"
+                                                    rows="3"><%= selectedSession?.special_notes || '' %></textarea>
+                                            </label>
+                                        </div>
+
+                                        <button type="submit" class="btn-submit">
+                                            <%= (selectedSession && selectedSession.id) ? "Update Session"
+                                                : "Create Session" %>
+                                        </button>
+
+                                        <% if (selectedSession && selectedSession.id) { %>
+                                            <a href="/trainer-dashboard" class="btn-create-new">Create New Session</a>
+                                            <% } %>
+                                    </form>
+                                </section>
+
+                                <!-- My Sessions -->
+                                <section class="dashboard-section">
+                                    <h2>My Assigned Sessions</h2>
+
+                                    <% if (sessions && sessions.length> 0) { %>
+                                        <div class="table-container">
+                                            <table class="sessions-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th>Time</th>
+                                                        <th>Activity</th>
+                                                        <th>Location</th>
+                                                        <th>Bookings</th>
+                                                        <th>Status</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% sessions.forEach(function(session) { %>
+                                                        <tr>
+                                                            <td data-label="Date">
+                                                                <%= new Date(session.date).toLocaleDateString('en-AU')
+                                                                    %>
+                                                            </td>
+                                                            <td data-label="Time">
+                                                                <%= session.start_time %> - <%= session.end_time %>
+                                                            </td>
+                                                            <td data-label="Activity">
+                                                                <%= session.activity_name %>
+                                                            </td>
+                                                            <td data-label="Location">
+                                                                <%= session.location_name %>
+                                                            </td>
+                                                            <td data-label="Bookings">
+                                                                <%= session.current_bookings %>/<%= session.max_capacity
+                                                                        %>
+                                                            </td>
+                                                            <td data-label="Status">
+                                                                <span class="status-badge status-<%= session.status %>">
+                                                                    <%= session.status %>
+                                                                </span>
+                                                            </td>
+                                                            <td data-label="Actions">
+                                                                <a href="/trainer-dashboard/<%= session.id %>"
+                                                                    class="btn-edit">Edit</a>
+                                                                <form method="POST"
+                                                                    action="/trainer/sessions/<%= session.id %>/delete"
+                                                                    style="display: inline;">
+                                                                    <button type="submit" class="btn-delete-small"
+                                                                        onclick="return confirm('Delete this session?')">
+                                                                        Delete
+                                                                    </button>
+                                                                </form>
+                                                            </td>
+                                                        </tr>
+                                                        <% }); %>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <% } else { %>
+                                            <p>No upcoming sessions assigned. Create your first session above!</p>
+                                            <% } %>
+                                </section>
+    </main>
+
+    <footer>
+        <%- include('partials/footer') %>
+    </footer>
+</body>
+
+</html>

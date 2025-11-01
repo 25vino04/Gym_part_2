@@ -1,0 +1,1181 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f7fa;
+}
+
+/* ==========================================
+   LAYOUT CONTAINER
+   ========================================== */
+
+.admin-container,
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* ==========================================
+   MOBILE MENU BUTTON
+   ========================================== */
+
+.mobile-menu-btn {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1002;
+    background: #2C3E50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 24px;
+    line-height: 1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.mobile-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.mobile-overlay.show {
+    display: block;
+    opacity: 1;
+}
+
+/* ==========================================
+   SIDEBAR - ПОДДЕРЖКА ОБОИХ КЛАССОВ
+   ========================================== */
+
+.sidebar,
+.admin-sidebar {
+    width: 260px;
+    background: linear-gradient(180deg, #2C3E50 0%, #34495e 100%);
+    color: white;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+.sidebar-header {
+    padding: 2rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-header h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 24px;
+}
+
+.sidebar-header p {
+    margin: 0;
+    opacity: 0.8;
+    font-size: 0.9rem;
+}
+
+.sidebar-nav {
+    padding: 1rem 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    color: white;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-item.logout {
+    color: #e74c3c;
+    margin-top: 1rem;
+}
+
+.nav-item .icon,
+.nav-item span {
+    font-size: 1.3rem;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 1rem 0;
+}
+
+/* ==========================================
+   MAIN CONTENT - ПОДДЕРЖКА ОБОИХ КЛАССОВ
+   ========================================== */
+
+.main-content,
+.admin-content {
+    flex: 1;
+    margin-left: 260px;
+    padding: 2rem;
+    min-height: 100vh;
+    background: #f5f7fa;
+}
+
+/* ==========================================
+   PAGE HEADER
+   ========================================== */
+
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    color: #2C3E50;
+    font-size: 2rem;
+    margin: 0 0 0.5rem 0;
+}
+
+.page-header p {
+    color: #666;
+    margin: 0;
+}
+
+/* ==========================================
+   STATISTICS CARDS
+   ========================================== */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.stat-icon {
+    font-size: 3rem;
+}
+
+.stat-info h3 {
+    color: #2C3E50;
+    font-size: 2rem;
+    margin: 0 0 0.3rem 0;
+}
+
+.stat-info p {
+    color: #666;
+    margin: 0;
+}
+
+/* ==========================================
+   QUICK ACTIONS
+   ========================================== */
+
+.quick-actions,
+.recent-activity {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.quick-actions h2,
+.recent-activity h2 {
+    color: #2C3E50;
+    margin: 0 0 1.5rem 0;
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.action-card {
+    border: 2px dashed #ddd;
+    padding: 2rem;
+    border-radius: 10px;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.3s;
+    display: block;
+}
+
+.action-card:hover {
+    border-color: #3498db;
+    background-color: #f8f9fa;
+    transform: translateY(-5px);
+}
+
+.action-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.action-card h3 {
+    color: #2C3E50;
+    margin: 0 0 0.5rem 0;
+}
+
+.action-card p {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* ==========================================
+   TABLES
+   ========================================== */
+
+.table-container {
+    overflow-x: auto;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+/* Таблицы внутри контента тоже белые */
+.admin-content>table,
+.main-content>table,
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+thead {
+    background-color: #f8f9fa;
+}
+
+thead tr {
+    background: #f8f9fa;
+}
+
+th,
+td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+}
+
+th {
+    color: #2C3E50;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Actions column - кнопки в ряд */
+td[data-label="Actions"] {
+    white-space: nowrap;
+}
+
+td[data-label="Actions"] a {
+    display: inline-block;
+    margin-right: 10px;
+    padding: 5px 10px;
+    color: #007bff;
+    text-decoration: none;
+    border: 1px solid #007bff;
+    border-radius: 3px;
+    background: white;
+}
+
+td[data-label="Actions"] a:hover {
+    background: #007bff;
+    color: white;
+}
+
+/* DELETE BUTTON - КРАСНАЯ */
+td[data-label="Actions"] form {
+    display: inline-block;
+    margin: 0;
+}
+
+td[data-label="Actions"] button[type="submit"] {
+    padding: 5px 10px;
+    background: #dc3545 !important;
+    color: white !important;
+    border: 1px solid #dc3545 !important;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+td[data-label="Actions"] button[type="submit"]:hover {
+    background: #c82333 !important;
+    border-color: #bd2130 !important;
+}
+
+/* ==========================================
+   STATUS BADGES
+   ========================================== */
+
+.status,
+.status-badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.status.confirmed,
+.status-confirmed {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status.cancelled,
+.status-cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.status.completed,
+.status-completed {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+/* ==========================================
+   FORMS
+   ========================================== */
+
+form:not([style*="inline"]) {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+form h2 {
+    margin: 0 0 1.5rem 0;
+    color: #2C3E50;
+}
+
+label {
+    display: block;
+    margin-bottom: 1rem;
+    color: #2C3E50;
+    font-weight: 500;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="date"],
+input[type="time"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-top: 0.25rem;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+button[type="submit"]:not([style*="inline"]) {
+    padding: 0.75rem 2rem;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s;
+}
+
+button[type="submit"]:hover {
+    background: #2980b9;
+}
+
+/* ==========================================
+   MESSAGES
+   ========================================== */
+
+.success-message,
+.error-message {
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 1.5rem;
+}
+
+.success-message {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.error-message {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* ==========================================
+   RESPONSIVE: TABLET (до 1024px)
+   ========================================== */
+
+@media (max-width: 1024px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Уменьшаем padding */
+    .main-content,
+    .admin-content {
+        padding: 1.5rem;
+    }
+
+    th,
+    td {
+        padding: 0.75rem 0.5rem;
+        font-size: 14px;
+    }
+}
+
+/* ==========================================
+   СРЕДНИЕ ЭКРАНЫ (768px - 1024px)
+   Горизонтальный скролл для таблицы
+   ========================================== */
+
+@media (max-width: 1024px) and (min-width: 769px) {
+
+    /* Таблица с горизонтальным скроллом */
+    table {
+        display: table;
+        min-width: 900px;
+    }
+
+    .table-container,
+    .admin-content>table,
+    .main-content>table {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Кнопки остаются рядом */
+    td[data-label="Actions"] {
+        white-space: nowrap;
+    }
+}
+
+/* ==========================================
+   RESPONSIVE: MOBILE (до 768px)
+   ========================================== */
+
+@media (max-width: 768px) {
+
+    /* Показываем бургер */
+    .mobile-menu-btn {
+        display: block;
+    }
+
+    /* Прячем sidebar */
+    .sidebar,
+    .admin-sidebar {
+        transform: translateX(-100%);
+    }
+
+    /* Открытое меню */
+    .sidebar.open,
+    .admin-sidebar.open {
+        transform: translateX(0);
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Контент на всю ширину */
+    .main-content,
+    .admin-content {
+        margin-left: 0;
+        padding: 70px 1rem 1rem 1rem;
+    }
+
+    .stats-grid,
+    .actions-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* ==========================================
+       ТАБЛИЦЫ → КАРТОЧКИ
+       ========================================== */
+
+    table thead {
+        display: none;
+    }
+
+    table,
+    table tbody,
+    table tr {
+        display: block;
+        width: 100%;
+    }
+
+    table tr {
+        margin-bottom: 1.5rem;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 1rem;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f0f0f0;
+        text-align: right;
+    }
+
+    table td:last-child {
+        border-bottom: none;
+        padding-top: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    table td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #2C3E50;
+        text-align: left;
+        margin-right: 1rem;
+    }
+
+    table td:last-child::before {
+        display: none;
+    }
+
+    /* Forms */
+    form:not([style*="inline"]) {
+        padding: 1.5rem 1rem;
+    }
+
+    input,
+    select,
+    textarea {
+        font-size: 16px;
+    }
+
+    button[type="submit"]:not([style*="inline"]) {
+        width: 100%;
+    }
+}
+
+/* ==========================================
+   RESPONSIVE: SMALL MOBILE (до 480px)
+   ========================================== */
+
+@media (max-width: 480px) {
+    .page-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .main-content,
+    .admin-content {
+        padding: 70px 0.5rem 0.5rem 0.5rem;
+    }
+}
+
+/* ==========================================
+   УЛУЧШЕННЫЕ ФОРМЫ С АДАПТИВНОСТЬЮ
+   ========================================== */
+
+.form-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.form-container h2 {
+    margin: 0 0 1.5rem 0;
+    color: #2C3E50;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    margin-bottom: 0.5rem;
+    color: #2C3E50;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-top: 0.25rem;
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 0.75rem 2rem;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s;
+    margin-top: 1rem;
+}
+
+.btn-submit:hover {
+    background: #2980b9;
+}
+
+/* ==========================================
+   АДАПТАЦИЯ ФОРМ ДЛЯ ПЛАНШЕТОВ
+   ========================================== */
+
+@media (max-width: 1024px) {
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .form-container {
+        padding: 1.5rem;
+    }
+}
+
+/* ==========================================
+   АДАПТАЦИЯ ФОРМ ДЛЯ МОБИЛЬНЫХ
+   ========================================== */
+
+@media (max-width: 768px) {
+    .form-container {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 16px;
+        /* Предотвращает зум на iOS */
+        padding: 0.875rem;
+    }
+
+    .btn-submit {
+        padding: 1rem;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-container h2 {
+        font-size: 1.25rem;
+    }
+}
+
+/* ==========================================
+   СТАТУСЫ СЕССИЙ И БУКИНГОВ
+   ========================================== */
+
+.status-scheduled {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+.status-ongoing {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-completed {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.status-no_show {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* ==========================================
+   КНОПКА УДАЛЕНИЯ
+   ========================================== */
+
+.btn-delete {
+    width: 100%;
+    padding: 0.75rem 2rem;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s;
+    margin-top: 0.5rem;
+}
+
+.btn-delete:hover {
+    background: #c82333;
+}
+
+/* ==========================================
+   READONLY ПОЛЯ (для Current bookings)
+   ========================================== */
+
+input[readonly] {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
+/* ==========================================
+   МОБИЛЬНАЯ АДАПТАЦИЯ - FIX ДЛЯ СТАТУСОВ
+   ========================================== */
+
+@media (max-width: 768px) {
+
+    /* Статусы в карточках */
+    table td[data-label="Status"] {
+        justify-content: flex-end;
+    }
+
+    table td[data-label="Status"] .status {
+        margin-left: auto;
+    }
+
+    /* Кнопки в Actions */
+    table td[data-label="Actions"] {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    table td[data-label="Actions"] a,
+    table td[data-label="Actions"] button {
+        width: 100%;
+        text-align: center;
+        margin: 0.25rem 0;
+    }
+}
+
+/* ==========================================
+   СТАТУСЫ СЕССИЙ, БУКИНГОВ И ПОСТОВ
+   ========================================== */
+
+.status-scheduled {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+.status-ongoing {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-completed {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.status-no_show {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.status-published {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-draft {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-archived {
+    background-color: #e2e3e5;
+    color: #383d41;
+}
+
+/* ==========================================
+   КНОПКА УДАЛЕНИЯ
+   ========================================== */
+
+.btn-delete {
+    width: 100%;
+    padding: 0.75rem 2rem;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s;
+    margin-top: 0.5rem;
+}
+
+.btn-delete:hover {
+    background: #c82333;
+}
+
+/* ==========================================
+   READONLY ПОЛЯ (для Current bookings)
+   ========================================== */
+
+input[readonly] {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
+/* ==========================================
+   МОБИЛЬНАЯ АДАПТАЦИЯ - FIX ДЛЯ СТАТУСОВ
+   ========================================== */
+
+@media (max-width: 768px) {
+
+    /* Статусы в карточках */
+    table td[data-label="Status"] {
+        justify-content: flex-end;
+    }
+
+    table td[data-label="Status"] .status {
+        margin-left: auto;
+    }
+
+    /* Кнопки в Actions */
+    table td[data-label="Actions"] {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    table td[data-label="Actions"] a,
+    table td[data-label="Actions"] button {
+        width: 100%;
+        text-align: center;
+        margin: 0.25rem 0;
+    }
+}
+
+/* ==========================================
+   УЛУЧШЕННЫЕ ФОРМЫ С АДАПТИВНОСТЬЮ
+   ========================================== */
+
+.form-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.form-container h2 {
+    margin: 0 0 1.5rem 0;
+    color: #2C3E50;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    margin-bottom: 0.5rem;
+    color: #2C3E50;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-top: 0.25rem;
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 0.75rem 2rem;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s;
+    margin-top: 1rem;
+}
+
+.btn-submit:hover {
+    background: #2980b9;
+}
+
+.btn-create-new {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 2rem;
+    background: #28a745;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s;
+    margin-top: 0.5rem;
+    font-weight: 600;
+}
+
+.btn-create-new:hover {
+    background: #218838;
+}
+
+/* ==========================================
+   АДАПТАЦИЯ ФОРМ ДЛЯ ПЛАНШЕТОВ
+   ========================================== */
+
+@media (max-width: 1024px) {
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .form-container {
+        padding: 1.5rem;
+    }
+}
+
+/* ==========================================
+   АДАПТАЦИЯ ФОРМ ДЛЯ МОБИЛЬНЫХ
+   ========================================== */
+
+@media (max-width: 768px) {
+    .form-container {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 16px;
+        /* Предотвращает зум на iOS */
+        padding: 0.875rem;
+    }
+
+    .btn-submit {
+        padding: 1rem;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-container h2 {
+        font-size: 1.25rem;
+    }
+}
+
+/* ==========================================
+   FILTERS
+   ========================================== */
+
+.filters-container {
+    background: white;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    /* ВАЖНО! */
+}
+
+.filters-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 200px)) auto;
+    gap: 1rem;
+    align-items: end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2C3E50;
+    margin-bottom: 0.3rem;
+}
+
+.filter-group input,
+.filter-group select {
+    padding: 0.4rem 0.6rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    height: 36px;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-filter,
+.btn-clear {
+    padding: 0.4rem 1rem;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    height: 36px;
+    line-height: 1.5;
+}
+
+.btn-filter {
+    background: #3498db;
+    color: white;
+}
+
+.btn-filter:hover {
+    background: #2980b9;
+}
+
+.btn-clear {
+    background: #95a5a6;
+    color: white;
+    display: inline-block;
+}
+
+.btn-clear:hover {
+    background: #7f8c8d;
+}
+
+@media (max-width: 768px) {
+    .filters-form {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-actions {
+        flex-direction: column;
+    }
+
+    .btn-filter,
+    .btn-clear {
+        width: 100%;
+    }
+}

@@ -1,0 +1,175 @@
+<%- include('partials/admin_header', { title: 'Posts Management' , user: user }) %>
+
+    <div class="page-header">
+        <h1>Blog Posts Management</h1>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters-container">
+        <form method="GET" action="/posts" class="filters-form">
+            <div class="filter-group">
+                <label>Status:</label>
+                <select name="status">
+                    <option value="">All Statuses</option>
+                    <option value="published" <%=locals.filterStatus==='published' ? 'selected' : '' %>>Published
+                    </option>
+                    <option value="draft" <%=locals.filterStatus==='draft' ? 'selected' : '' %>>Draft</option>
+                    <option value="archived" <%=locals.filterStatus==='archived' ? 'selected' : '' %>>Archived</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Author:</label>
+                <select name="author">
+                    <option value="">All Authors</option>
+                    <% (users || []).forEach(u=> { %>
+                        <option value="<%= u.id %>" <%=locals.filterAuthor==u.id ? 'selected' : '' %>>
+                            <%= u.first_name %>
+                                <%= u.last_name %>
+                        </option>
+                        <% }) %>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Search:</label>
+                <input type="text" name="search" placeholder="Title or Content"
+                    value="<%= locals.filterSearch || '' %>">
+            </div>
+
+            <div class="filter-group">
+                <label>Created Date:</label>
+                <input type="date" name="createdDate" value="<%= locals.filterCreatedDate || '' %>">
+            </div>
+
+            <div class="filter-actions">
+                <button type="submit" class="btn-filter">Apply Filters</button>
+                <a href="/posts" class="btn-clear">Clear</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Success messages -->
+    <% if (success==='post_created' ) { %>
+        <div class="success-message">✅ Post created successfully</div>
+        <% } else if (success==='post_updated' ) { %>
+            <div class="success-message">✅ Post updated successfully</div>
+            <% } else if (success==='post_deleted' ) { %>
+                <div class="success-message">✅ Post deleted successfully</div>
+                <% } %>
+
+                    <!-- Error message -->
+                    <% if (error==='delete_failed' ) { %>
+                        <div class="error-message">❌ Failed to delete post</div>
+                        <% } %>
+
+                            <!-- TABLE -->
+                            <div class="table-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+
+                                            <th>Author</th>
+                                            <th>Title</th>
+                                            <th>Status</th>
+                                            <th>Created</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% (posts || []).forEach(p=> { %>
+                                            <tr>
+
+                                                <td data-label="Author">
+                                                    <%= p.author_name || 'User #' + p.user_id %>
+                                                </td>
+                                                <td data-label="Title">
+                                                    <%= p.title %>
+                                                </td>
+                                                <td data-label="Status">
+                                                    <span class="status status-<%= p.status %>">
+                                                        <%= p.status %>
+                                                    </span>
+                                                </td>
+                                                <td data-label="Created">
+                                                    <%= new Date(p.created_at).toLocaleDateString('en-AU') %>
+                                                </td>
+                                                <td data-label="Actions">
+                                                    <a href="/posts/<%= p.id %>">Edit</a>
+                                                    <form method="POST" action="/posts/<%= p.id %>/delete"
+                                                        style="display: inline;"
+                                                        onsubmit="return confirm('Delete this post?');">
+                                                        <button type="submit"> Delete</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- FORM -->
+                            <div class="form-container">
+                                <h2>
+                                    <%= (selectedPost && selectedPost.id) ? "Edit Post" : "Create Post" %>
+                                </h2>
+
+                                <form method="POST" action="/posts/<%= (selectedPost && selectedPost.id) || '' %>">
+                                    <input type="hidden" name="action"
+                                        value="<%= (selectedPost && selectedPost.id) ? 'update' : 'create' %>">
+
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>Author: *
+                                                <select name="user_id" required>
+                                                    <option value="">-- Choose Author --</option>
+                                                    <% (users || []).forEach(u=> { %>
+                                                        <option value="<%= u.id %>" <%=(selectedPost?.user_id==u.id)
+                                                            ? 'selected' : '' %>>
+                                                            <%= u.first_name %>
+                                                                <%= u.last_name %>
+                                                        </option>
+                                                        <% }) %>
+                                                </select>
+                                            </label>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Status: *
+                                                <select name="status" required>
+                                                    <option value="published" <%=selectedPost?.status==='published'
+                                                        ? 'selected' : '' %>>Published</option>
+                                                    <option value="draft" <%=selectedPost?.status==='draft' ? 'selected'
+                                                        : '' %>>Draft</option>
+                                                    <option value="archived" <%=selectedPost?.status==='archived'
+                                                        ? 'selected' : '' %>>Archived</option>
+                                                </select>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group full-width">
+                                        <label>Title: *
+                                            <input type="text" name="title" value="<%= selectedPost?.title || '' %>"
+                                                required minlength="3" maxlength="200">
+                                        </label>
+                                    </div>
+
+                                    <div class="form-group full-width">
+                                        <label>Content: *
+                                            <textarea name="content" rows="10" required
+                                                minlength="10"><%= selectedPost?.content || '' %></textarea>
+                                        </label>
+                                    </div>
+
+                                    <button type="submit" class="btn-submit">
+                                        <%= (selectedPost && selectedPost.id) ? "Update Post" : "Create Post" %>
+                                    </button>
+                                    <% if (selectedPost && selectedPost.id) { %>
+                                        <a href="/posts" class="btn-create-new">Create New Post</a>
+                                        <% } %>
+
+                                </form>
+                            </div>
+
+                            <%- include('partials/admin_footer') %>

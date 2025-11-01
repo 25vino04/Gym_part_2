@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - High Street Gym</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/auth.css">
+</head>
+
+<body>
+    <header>
+        <%- include('partials/nav') %>
+    </header>
+
+    <main class="auth-container">
+        <div class="auth-box">
+            <h1>Create Your Account</h1>
+            <p>Join High Street Gym today</p>
+
+            <!-- Error message -->
+            <% if (locals.error) { %>
+                <div class="error-message">
+                    <%= error %>
+                </div>
+                <% } %>
+
+                    <% if (locals.errors && errors.length> 0) { %>
+                        <div class="error-message">
+                            <strong>Please fix the following errors:</strong>
+                            <ul style="margin: 10px 0; padding-left: 20px;">
+                                <% errors.forEach(err=> { %>
+                                    <li>
+                                        <%= err %>
+                                    </li>
+                                    <% }) %>
+                            </ul>
+                        </div>
+                        <% } %>
+
+                            <form method="POST" action="/register" class="auth-form" id="registerForm">
+
+                                <div class="form-group">
+                                    <label for="first_name">First Name *</label>
+                                    <input type="text" id="first_name" name="first_name"
+                                        value="<%= locals.formData?.first_name || '' %>" required minlength="2"
+                                        maxlength="50" pattern="[A-Za-zÀ-ÿ\s\-']+"
+                                        title="First name should contain only letters" placeholder="John">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="last_name">Last Name *</label>
+                                    <input type="text" id="last_name" name="last_name"
+                                        value="<%= locals.formData?.last_name || '' %>" required minlength="2"
+                                        maxlength="50" pattern="[A-Za-zÀ-ÿ\s\-']+"
+                                        title="Last name should contain only letters" placeholder="Smith">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="email">Email Address *</label>
+                                    <input type="email" id="email" name="email"
+                                        value="<%= locals.formData?.email || '' %>" required
+                                        pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                                        title="Please enter a valid email address (must contain @)"
+                                        placeholder="john.smith@example.com">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="phone">Phone Number</label>
+                                    <input type="tel" id="phone" name="phone"
+                                        value="<%= locals.formData?.phone || '' %>" pattern="(\+61\d{9})|(0\d{9})"
+                                        title="Phone must be +61XXXXXXXXX (9 digits) or 0XXXXXXXXX (10 digits total)"
+                                        placeholder="+61412345678 or 0412345678">
+                                    <small class="form-help">Format: +61XXXXXXXXX or 0XXXXXXXXX</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="password">Password *</label>
+                                    <input type="password" id="password" name="password" required minlength="8"
+                                        title="Password must be at least 8 characters" placeholder="Min 8 characters">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="confirm_password">Confirm Password *</label>
+                                    <input type="password" id="confirm_password" name="confirm_password" required
+                                        minlength="8" title="Please confirm your password">
+                                </div>
+
+                                <button type="submit" class="btn-primary">Register</button>
+
+                                <p class="auth-switch">
+                                    Already have an account? <a href="/login">Login here</a>
+                                </p>
+                            </form>
+        </div>
+    </main>
+
+    <footer>
+        <%- include('partials/footer') %>
+    </footer>
+
+    <script>
+
+        document.getElementById('registerForm')?.addEventListener('submit', function (e) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const phone = document.getElementById('phone').value.trim();
+
+
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                alert('Passwords do not match!');
+                return false;
+            }
+
+
+            if (phone) {
+                const cleanPhone = phone.replace(/\s/g, '');
+                const format1 = /^\+61\d{9}$/.test(cleanPhone);
+                const format2 = /^0\d{9}$/.test(cleanPhone);
+
+                if (!format1 && !format2) {
+                    e.preventDefault();
+                    alert('Phone number must be in format:\n+61XXXXXXXXX (9 digits after +61)\nor\n0XXXXXXXXX (9 digits after 0)\n\nExample: +61412345678 or 0412345678');
+                    return false;
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

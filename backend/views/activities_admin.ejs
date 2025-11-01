@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activities Management - High Street Gym</title>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+
+<body>
+    <%- include('partials/admin_header', { title: 'Activities Management' , user: user }) %>
+
+        <div class="page-header">
+            <h1>Activities Management</h1>
+        </div>
+
+        <!-- Success messages -->
+        <% if (success==='activity_created' ) { %>
+            <div class="success-message">✅ Activity created successfully</div>
+            <% } else if (success==='activity_updated' ) { %>
+                <div class="success-message">✅ Activity updated successfully</div>
+                <% } else if (success==='activity_deleted' ) { %>
+                    <div class="success-message">✅ Activity deleted successfully</div>
+                    <% } %>
+
+                        <!-- Error messages -->
+                        <% if (error==='delete_failed' ) { %>
+                            <div class="error-message">❌ Failed to delete activity</div>
+                            <% } else if (error==='constraint_failed' ) { %>
+                                <div class="error-message">
+                                    ❌ Cannot delete this activity - it's being used in existing sessions.
+                                    <br>Please delete all sessions using this activity first.
+                                </div>
+                                <% } %>
+
+                                    <!-- Filter -->
+                                    <!-- Filter -->
+                                    <div class="filters-container">
+                                        <form method="GET" action="/activities" class="filters-form">
+                                            <div class="filter-group">
+                                                <label>Activity Name:</label>
+                                                <select name="name">
+                                                    <option value="">All Activities</option>
+                                                    <% (activityNames || []).forEach(act=> { %>
+                                                        <option value="<%= act.id %>" <%=locals.filterName==act.id
+                                                            ? 'selected' : '' %>><%= act.name %>
+                                                        </option>
+                                                        <% }) %>
+                                                </select>
+                                            </div>
+
+                                            <div class="filter-group">
+                                                <label>Category:</label>
+                                                <select name="category">
+                                                    <option value="">All Categories</option>
+                                                    <% (categories || []).forEach(cat=> { %>
+                                                        <option value="<%= cat %>" <%=locals.filterCategory===cat
+                                                            ? 'selected' : '' %>><%= cat %>
+                                                        </option>
+                                                        <% }) %>
+                                                </select>
+                                            </div>
+
+                                            <div class="filter-group">
+                                                <label>Duration:</label>
+                                                <select name="duration">
+                                                    <option value="">All Durations</option>
+                                                    <% (durations || []).forEach(dur=> { %>
+                                                        <option value="<%= dur %>" <%=locals.filterDuration==dur
+                                                            ? 'selected' : '' %>><%= dur %> min
+                                                        </option>
+                                                        <% }) %>
+                                                </select>
+                                            </div>
+
+                                            <div class="filter-group">
+                                                <label>Max Participants:</label>
+                                                <select name="max_participants">
+                                                    <option value="">All Capacities</option>
+                                                    <% (maxParticipants || []).forEach(max=> { %>
+                                                        <option value="<%= max %>" <%=locals.filterMaxParticipants==max
+                                                            ? 'selected' : '' %>><%= max %>
+                                                        </option>
+                                                        <% }) %>
+                                                </select>
+                                            </div>
+
+                                            <div class="filter-actions">
+                                                <button type="submit" class="btn-filter">Apply Filters</button>
+                                                <a href="/activities" class="btn-clear">Clear</a>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <!-- TABLE -->
+                                    <div class="table-container">
+                                        <table>
+
+                                            <!-- TABLE -->
+                                            <div class="table-container">
+                                                <table>
+                                                    <thead>
+                                                        <tr>
+
+                                                            <th>Name</th>
+                                                            <th>Category</th>
+                                                            <th>Duration</th>
+                                                            <th>Max Participants</th>
+                                                            <th>Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <% (activities || []).forEach(function(a) { %>
+                                                            <tr>
+
+                                                                <td data-label="Name">
+                                                                    <%= a.name %>
+                                                                </td>
+                                                                <td data-label="Category">
+                                                                    <%= a.category %>
+                                                                </td>
+                                                                <td data-label="Duration">
+                                                                    <%= a.duration %> min
+                                                                </td>
+                                                                <td data-label="Max Participants">
+                                                                    <%= a.max_participants %>
+                                                                </td>
+                                                                <td data-label="Actions">
+                                                                    <a href="/activities/<%= a.id %>">Edit</a>
+                                                                    <form method="POST"
+                                                                        action="/activities/<%= a.id %>/delete"
+                                                                        style="display: inline;"
+                                                                        onsubmit="return confirm('Delete <%= a.name %>?');">
+                                                                        <button type="submit"> Delete</button>
+                                                                    </form>
+                                                                </td>
+                                                            </tr>
+                                                            <% }); %>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            <!-- FORM -->
+                                            <div class="form-container">
+                                                <h2>
+                                                    <%= (selectedActivity && selectedActivity.id) ? "Edit Activity"
+                                                        : "Create Activity" %>
+                                                </h2>
+
+                                                <form method="POST"
+                                                    action="/activities/<%= (selectedActivity && selectedActivity.id) || '' %>">
+                                                    <input type="hidden" name="action"
+                                                        value="<%= (selectedActivity && selectedActivity.id) ? 'update' : 'create' %>">
+
+                                                    <div class="form-row">
+                                                        <div class="form-group">
+                                                            <label>Name: *
+                                                                <input type="text" name="name"
+                                                                    value="<%= selectedActivity?.name || '' %>"
+                                                                    required>
+                                                            </label>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label>Category: *
+                                                                <input type="text" name="category"
+                                                                    value="<%= selectedActivity?.category || '' %>"
+                                                                    required>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-row">
+                                                        <div class="form-group">
+                                                            <label>Duration (minutes): *
+                                                                <input type="number" name="duration"
+                                                                    value="<%= selectedActivity?.duration ?? 60 %>"
+                                                                    min="1" required>
+                                                            </label>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label>Max participants: *
+                                                                <input type="number" name="max_participants"
+                                                                    value="<%= selectedActivity?.max_participants ?? 20 %>"
+                                                                    min="1" required>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group full-width">
+                                                        <label>Equipment needed:
+                                                            <input type="text" name="equipment_needed"
+                                                                value="<%= selectedActivity?.equipment_needed || '' %>"
+                                                                placeholder="e.g., Mat, Dumbbells, Resistance bands">
+                                                        </label>
+                                                    </div>
+
+                                                    <div class="form-group full-width">
+                                                        <label>Description:
+                                                            <textarea name="description" rows="4"
+                                                                placeholder="Describe the activity..."><%= selectedActivity?.description || '' %></textarea>
+                                                        </label>
+                                                    </div>
+
+                                                    <button type="submit" class="btn-submit">
+                                                        <%= (selectedActivity && selectedActivity.id)
+                                                            ? "Update Activity" : "Create Activity" %>
+                                                    </button>
+
+                                                    <% if (selectedActivity && selectedActivity.id) { %>
+                                                        <a href="/activities" class="btn-create-new">Create New
+                                                            Activity</a>
+                                                        <% } %>
+                                                </form>
+
+
+                                                <% if (selectedActivity && selectedActivity.id) { %>
+                                                    <form id="deleteForm" method="POST"
+                                                        action="/activities/<%= selectedActivity.id %>"
+                                                        style="display: none;">
+                                                        <input type="hidden" name="action" value="delete">
+                                                    </form>
+                                                    <% } %>
+                                            </div>
+
+                                            <%- include('partials/admin_footer') %>
+</body>
+
+</html>

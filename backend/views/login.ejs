@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - High Street Gym</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/auth.css">
+</head>
+
+<body>
+    <header>
+        <%- include('partials/nav') %>
+    </header>
+
+    <main class="auth-container">
+        <div class="auth-box">
+            <h1>Welcome Back</h1>
+            <p>Login to your account</p>
+
+            <!-- success-message -->
+            <% if (locals.success) { %>
+                <div class="success-message"
+                    style="background: #d4edda; color: #155724; padding: 12px; margin: 15px 0; border-radius: 5px; border: 1px solid #c3e6cb;">
+                    <%= success %>
+                </div>
+                <% } %>
+
+                    <!-- error-message -->
+                    <% if (locals.error) { %>
+                        <div class="error-message"
+                            style="background: #f8d7da; color: #721c24; padding: 12px; margin: 15px 0; border-radius: 5px; border: 1px solid #f5c6cb;">
+                            <%= error %>
+                        </div>
+                        <% } %>
+
+                            <form method="POST" action="/login" class="auth-form">
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="email" id="email" name="email" required
+                                        placeholder="your.email@example.com">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="password">Password</label>
+                                    <input type="password" id="password" name="password" required
+                                        placeholder="Enter your password">
+                                </div>
+
+                                <button type="submit" class="btn-primary">Login</button>
+
+                                <p class="auth-switch">
+                                    Don't have an account? <a href="/register">Register here</a>
+                                </p>
+                            </form>
+        </div>
+    </main>
+
+    <footer>
+        <%- include('partials/footer') %>
+    </footer>
+</body>
+
+</html>

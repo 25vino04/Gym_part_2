@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Class Timetable - High Street Gym</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/timetable.css" />
+
+</head>
+
+<body>
+    <header>
+        <%- include('partials/nav') %>
+    </header>
+
+    <main class="timetable-page">
+        <div class="timetable-header">
+            <h1>Weekly Class Schedule</h1>
+            <p>Choose from our variety of classes across all locations</p>
+        </div>
+
+        <% if (success) { %>
+            <div class="success-message">
+                <%= success %>
+            </div>
+            <% } %>
+
+                <% if (error) { %>
+                    <div class="error-message">
+                        <%= error %>
+                    </div>
+                    <% } %>
+
+                        <% if (!user) { %>
+                            <div class="guest-info">
+                                <p><strong>Want to book a class?</strong> <a href="/register">Join us</a> or <a
+                                        href="/login">login</a> to reserve your spot!</p>
+                            </div>
+                            <% } %>
+
+                                <!-- Week Navigation -->
+                                <div class="week-navigation">
+                                    <a href="/timetable?week=<%= weekOffset - 1 %>" class="week-nav-btn">&larr; Previous
+                                        Week</a>
+                                    <div class="current-week"><strong>
+                                            <%= weekStart %> - <%= weekEnd %>
+                                        </strong></div>
+                                    <a href="/timetable?week=<%= weekOffset + 1 %>" class="week-nav-btn">Next Week
+                                        &rarr;</a>
+                                </div>
+
+                                <!-- Filters -->
+                                <div class="filter-section">
+                                    <label for="activity-filter">Filter by activity:</label>
+                                    <select id="activity-filter" onchange="filterClasses()">
+                                        <option value="">All Classes</option>
+                                        <option value="Yoga">Yoga</option>
+                                        <option value="Pilates">Pilates</option>
+                                        <option value="Abs">Abs</option>
+                                        <option value="HIIT">HIIT</option>
+                                        <option value="Indoor Cycling">Indoor Cycling</option>
+                                        <option value="Boxing">Boxing</option>
+                                        <option value="Zumba">Zumba</option>
+                                    </select>
+
+                                    <label for="trainer-filter" style="margin-left: 2rem;">Filter by trainer:</label>
+                                    <select id="trainer-filter" onchange="filterClasses()">
+                                        <option value="">All Trainers</option>
+                                        <option value="Emma Williams">Emma Williams</option>
+                                        <option value="James Martinez">James Martinez</option>
+                                        <option value="Sophie Anderson">Sophie Anderson</option>
+                                    </select>
+                                </div>
+
+                                <!-- Timetable Grid -->
+                                <div class="timetable-grid">
+                                    <% days.forEach(function(day){ %>
+                                        <div class="day-column">
+                                            <div class="day-header">
+                                                <h3>
+                                                    <%= day.name %>
+                                                </h3>
+                                                <p class="day-date">
+                                                    <%= day.date %>
+                                                </p>
+                                            </div>
+
+                                            <div class="sessions-container">
+                                                <% if (day.sessions && day.sessions.length> 0) { %>
+                                                    <% day.sessions.forEach(function(session){ %>
+                                                        <div class="session-card"
+                                                            data-activity="<%= session.activity_name %>"
+                                                            data-trainer="<%= session.trainer_name %>">
+
+                                                            <div class="session-time">
+                                                                <%= session.start_time %> - <%= session.end_time %>
+                                                            </div>
+
+                                                            <div class="session-info">
+
+                                                                <h4 class="activity-name">
+                                                                    <%= session.activity_name %>
+                                                                </h4>
+
+                                                                <p class="trainer-name">
+                                                                    <strong>Trainer:</strong>
+                                                                    <%= session.trainer_name %>
+                                                                </p>
+
+                                                                <p class="location-name">
+                                                                    <strong>Location:</strong>
+                                                                    <%= session.location_name %>
+                                                                </p>
+
+                                                                <p class="capacity">
+                                                                    <strong>Spots:</strong>
+                                                                    <span
+                                                                        class="<%= session.available_spots <= 5 ? 'low-spots' : '' %>">
+                                                                        <%= session.available_spots %> / <%=
+                                                                                session.max_capacity %>
+                                                                    </span>
+                                                                </p>
+                                                            </div>
+
+                                                            <% if (user && user.role==='member' ) { %>
+                                                                <% if (session.available_spots> 0) { %>
+                                                                    <% if (session.is_booked) { %>
+                                                                        <button class="btn-booked" disabled>Already
+                                                                            Booked</button>
+                                                                        <% } else { %>
+                                                                            <form method="POST" action="/timetable/book"
+                                                                                class="booking-form">
+                                                                                <input type="hidden" name="session_id"
+                                                                                    value="<%= session.id %>" />
+                                                                                <button type="submit"
+                                                                                    class="btn-book">Book Class</button>
+                                                                            </form>
+                                                                            <% } %>
+                                                                                <% } else { %>
+                                                                                    <button class="btn-full"
+                                                                                        disabled>Class Full</button>
+                                                                                    <% } %>
+                                                                                        <% } %>
+                                                        </div>
+                                                        <% }); %>
+                                                            <% } else { %>
+                                                                <div class="no-sessions">
+                                                                    <p>No classes scheduled</p>
+                                                                </div>
+                                                                <% } %>
+                                            </div>
+                                        </div>
+                                        <% }); %>
+                                </div>
+
+                                <!-- Class Descriptions -->
+                                <section class="class-descriptions">
+                                    <h2>Our Classes</h2>
+                                    <div class="descriptions-grid">
+                                        <div class="class-card">
+                                            <h3>Yoga</h3>
+                                            <p>Improve flexibility, strength and mindfulness through traditional yoga
+                                                practices.</p>
+                                        </div>
+                                        <div class="class-card">
+                                            <h3>Pilates</h3>
+                                            <p>Core-focused exercises to build strength, flexibility and body awareness.
+                                            </p>
+                                        </div>
+                                        <div class="class-card">
+                                            <h3>Abs</h3>
+                                            <p>Targeted abdominal workouts to strengthen your core muscles.</p>
+                                        </div>
+                                        <div class="class-card">
+                                            <h3>HIIT</h3>
+                                            <p>High-intensity interval training for maximum calorie burn and fitness
+                                                gains.</p>
+                                        </div>
+                                        <div class="class-card">
+                                            <h3>Indoor Cycling</h3>
+                                            <p>High-energy cycling classes with motivating music and expert coaching.
+                                            </p>
+                                        </div>
+                                        <div class="class-card">
+                                            <h3>Boxing</h3>
+                                            <p>Learn boxing techniques while getting an incredible full-body workout.
+                                            </p>
+                                        </div>
+                                        <div class="class-card">
+                                            <h3>Zumba</h3>
+                                            <p>Dance-based fitness class combining Latin rhythms with easy-to-follow
+                                                moves.</p>
+                                        </div>
+                                    </div>
+                                    <p class="request-note">Other activities will be added if requested by gym members
+                                        and trainers are available.</p>
+                                </section>
+    </main>
+
+    <footer>
+        <%- include('partials/footer') %>
+    </footer>
+
+    <script>
+        function filterClasses() {
+            const activityFilter = document.getElementById('activity-filter').value;
+            const trainerFilter = document.getElementById('trainer-filter').value;
+            const cards = document.querySelectorAll('.session-card');
+
+            cards.forEach((card) => {
+                const activity = card.dataset.activity;
+                const trainer = card.dataset.trainer;
+                const activityMatch = !activityFilter || activity === activityFilter;
+                const trainerMatch = !trainerFilter || trainer === trainerFilter;
+                card.style.display = (activityMatch && trainerMatch) ? 'block' : 'none';
+            });
+        }
+    </script>
+</body>
+
+</html>

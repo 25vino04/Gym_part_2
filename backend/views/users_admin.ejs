@@ -1,0 +1,215 @@
+<%- include('partials/admin_header', { title: 'Users Management' , user: user }) %>
+
+    <div class="page-header">
+        <h1>Users Management</h1>
+    </div>
+
+
+    <!-- FILTERS -->
+    <div class="filters-container">
+        <form method="GET" action="/users" class="filters-form">
+            <div class="filter-group">
+                <label>Role:</label>
+                <select name="role">
+                    <option value="">All Roles</option>
+                    <option value="member" <%=locals.filterRole==='member' ? 'selected' : '' %>>Member</option>
+                    <option value="trainer" <%=locals.filterRole==='trainer' ? 'selected' : '' %>>Trainer
+                    </option>
+                    <option value="admin" <%=locals.filterRole==='admin' ? 'selected' : '' %>>Admin</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Search:</label>
+                <input type="text" name="search" placeholder="Name or Email" value="<%= locals.filterSearch || '' %>">
+            </div>
+
+            <div class="filter-actions">
+                <button type="submit" class="btn-filter">Apply Filters</button>
+                <a href="/users" class="btn-clear">Clear</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Success message -->
+    <% if (locals.success==='user_deleted' ) { %>
+        <div class="success-message">✅ User deleted successfully</div>
+        <% } %>
+
+            <!-- Error messages -->
+            <% if (locals.errors && errors.length> 0) { %>
+                <div class="error-message">
+                    <strong>Validation Errors:</strong>
+                    <ul style="margin: 10px 0; padding-left: 20px;">
+                        <% errors.forEach(error=> { %>
+                            <li>
+                                <%= error %>
+                            </li>
+                            <% }) %>
+                    </ul>
+                </div>
+                <% } %>
+
+                    <!-- TABLE -->
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Name</th>
+                                    <th>Phone</th>
+                                    <th>Membership</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% (users || []).forEach(u=> { %>
+                                    <tr>
+
+                                        <td data-label="Email">
+                                            <%= u.email %>
+                                        </td>
+                                        <td data-label="Role">
+                                            <%= u.role %>
+                                        </td>
+                                        <td data-label="Name">
+                                            <%= u.first_name %>
+                                                <%= u.last_name %>
+                                        </td>
+                                        <td data-label="Phone">
+                                            <%= u.phone || '-' %>
+                                        </td>
+                                        <td data-label="Membership">
+                                            <%= u.membership_start || '-' %> → <%= u.membership_end || '-' %>
+                                        </td>
+                                        <td data-label="Actions">
+                                            <a href="/users/<%= u.id %>">Edit</a>
+                                            <form method="POST" action="/users/<%= u.id %>/delete"
+                                                style="display: inline;">
+                                                <button type="submit"
+                                                    onclick="return confirm('Delete <%= u.first_name %> <%= u.last_name %>?');">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- FORM -->
+                    <div class="form-container">
+                        <h2>
+                            <%= (selectedUser && selectedUser.id) ? "Edit User" : "Create User" %>
+                        </h2>
+
+                        <form method="POST" action="/users/<%= (selectedUser && selectedUser.id) || '' %>">
+                            <input type="hidden" name="action"
+                                value="<%= (selectedUser && selectedUser.id) ? 'update' : 'create' %>">
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Email: *
+                                        <input type="email" name="email" value="<%= selectedUser?.email || '' %>"
+                                            required>
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Password:
+                                        <input type="password" name="password" <%=!selectedUser || !selectedUser.id
+                                            ? 'required' : '' %>
+                                        minlength="8"
+                                        placeholder="<%= selectedUser?.id ? 'Leave blank to keep' : 'Min 8 characters'
+                                            %>">
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>First name: *
+                                        <input type="text" name="first_name"
+                                            value="<%= selectedUser?.first_name || '' %>" required>
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Last name: *
+                                        <input type="text" name="last_name" value="<%= selectedUser?.last_name || '' %>"
+                                            required>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Role: *
+                                        <select name="role" required>
+                                            <option value="member" <%=selectedUser?.role==='member' ? 'selected' : '' %>
+                                                >Member</option>
+                                            <option value="trainer" <%=selectedUser?.role==='trainer' ? 'selected' : ''
+                                                %>>Trainer</option>
+                                            <option value="admin" <%=selectedUser?.role==='admin' ? 'selected' : '' %>
+                                                >Admin</option>
+                                        </select>
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Phone:
+                                        <input type="tel" name="phone" value="<%= selectedUser?.phone || '' %>">
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Emergency contact:
+                                        <input type="text" name="emergency_contact"
+                                            value="<%= selectedUser?.emergency_contact || '' %>">
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Emergency phone:
+                                        <input type="tel" name="emergency_phone"
+                                            value="<%= selectedUser?.emergency_phone || '' %>">
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label>Medical notes:
+                                    <textarea name="medical_notes"
+                                        rows="3"><%= selectedUser?.medical_notes || '' %></textarea>
+                                </label>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Membership start:
+                                        <input type="date" name="membership_start"
+                                            value="<%= selectedUser?.membership_start ? selectedUser.membership_start.split('T')[0] : '' %>">
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Membership end:
+                                        <input type="date" name="membership_end"
+                                            value="<%= selectedUser?.membership_end ? selectedUser.membership_end.split('T')[0] : '' %>">
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-submit">Save User</button>
+                            <% if (selectedUser && selectedUser.id) { %>
+                                <a href="/users" class="btn-create-new">Create New User</a>
+                                <% } %>
+                        </form>
+                    </div>
+
+                    <%- include('partials/admin_footer') %>

@@ -1,0 +1,323 @@
+<%- include('partials/admin_header', { title: 'Sessions Management' , user: user }) %>
+
+    <div class="page-header">
+        <h1>Sessions Management</h1>
+    </div>
+
+    <!-- Success messages -->
+    <% if (success==='session_created' ) { %>
+        <div class="success-message">✅ Session created successfully</div>
+        <% } else if (success==='session_updated' ) { %>
+            <div class="success-message">✅ Session updated successfully</div>
+            <% } else if (success==='session_deleted' ) { %>
+                <div class="success-message">✅ Session deleted successfully</div>
+                <% } %>
+
+                    <!-- Error message -->
+                    <% if (error==='delete_failed' ) { %>
+                        <div class="error-message">❌ Failed to delete session</div>
+                        <% } %>
+
+                            <% if (locals.errors && errors.length> 0) { %>
+                                <div class="error-message">
+                                    <strong>Validation Errors:</strong>
+                                    <ul style="margin: 10px 0; padding-left: 20px;">
+                                        <% errors.forEach(error=> { %>
+                                            <li>
+                                                <%= error %>
+                                            </li>
+                                            <% }) %>
+                                    </ul>
+                                </div>
+                                <% } %>
+
+                                    <!-- FILTERS -->
+                                    <div class="filters-container">
+                                        <form method="GET" action="/sessions" class="filters-form">
+                                            <div class="filter-group">
+                                                <label>Status:</label>
+                                                <select name="status">
+                                                    <option value="">All Statuses</option>
+                                                    <option value="scheduled" <%=locals.filterStatus==='scheduled'
+                                                        ? 'selected' : '' %>>Scheduled</option>
+                                                    <option value="ongoing" <%=locals.filterStatus==='ongoing'
+                                                        ? 'selected' : '' %>>Ongoing</option>
+                                                    <option value="completed" <%=locals.filterStatus==='completed'
+                                                        ? 'selected' : '' %>>Completed</option>
+                                                    <option value="cancelled" <%=locals.filterStatus==='cancelled'
+                                                        ? 'selected' : '' %>>Cancelled</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="filter-group">
+                                                <label>Activity:</label>
+                                                <select name="activity">
+                                                    <option value="">All Activities</option>
+                                                    <% (activities || []).forEach(a=> { %>
+                                                        <option value="<%= a.id %>" <%=locals.filterActivity==a.id
+                                                            ? 'selected' : '' %>><%= a.name %>
+                                                        </option>
+                                                        <% }) %>
+                                                </select>
+                                            </div>
+
+                                            <div class="filter-group">
+                                                <label>Trainer:</label>
+                                                <select name="trainer">
+                                                    <option value="">All Trainers</option>
+                                                    <% (trainers || []).forEach(t=> { %>
+                                                        <option value="<%= t.id %>" <%=locals.filterTrainer==t.id
+                                                            ? 'selected' : '' %>>
+                                                            <%= t.first_name %>
+                                                                <%= t.last_name %>
+                                                        </option>
+                                                        <% }) %>
+                                                </select>
+                                            </div>
+
+                                            <div class="filter-group">
+                                                <label>Location:</label>
+                                                <select name="location">
+                                                    <option value="">All Locations</option>
+                                                    <% (locations || []).forEach(l=> { %>
+                                                        <option value="<%= l.id %>" <%=locals.filterLocation==l.id
+                                                            ? 'selected' : '' %>><%= l.name %>
+                                                        </option>
+                                                        <% }) %>
+                                                </select>
+                                            </div>
+
+                                            <div class="filter-group">
+                                                <label>Date:</label>
+                                                <input type="date" name="date" value="<%= locals.filterDate || '' %>">
+                                            </div>
+
+                                            <div class="filter-actions">
+                                                <button type="submit" class="btn-filter">Apply Filters</button>
+                                                <a href="/sessions" class="btn-clear">Clear</a>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <!-- TABLE -->
+                                    <div class="table-container">
+                                        <table>
+                                            <thead>
+                                                <tr>
+
+                                                    <th>Date</th>
+                                                    <th>Time</th>
+                                                    <th>Activity</th>
+                                                    <th>Location</th>
+                                                    <th>Trainer</th>
+                                                    <th>Cap</th>
+                                                    <th>Booked</th>
+                                                    <th>Status</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <% (sessions || []).forEach(s=> { %>
+                                                    <tr>
+
+                                                        <td data-label="Date">
+                                                            <%= s.date %>
+                                                        </td>
+                                                        <td data-label="Time">
+                                                            <%= s.start_time %>—<%= s.end_time %>
+                                                        </td>
+                                                        <td data-label="Activity">
+                                                            <%= s.activity_name %>
+                                                        </td>
+                                                        <td data-label="Location">
+                                                            <%= s.location_name %>
+                                                        </td>
+                                                        <td data-label="Trainer">
+                                                            <%= s.trainer_name %>
+                                                        </td>
+                                                        <td data-label="Cap">
+                                                            <%= s.max_capacity %>
+                                                        </td>
+                                                        <td data-label="Booked">
+                                                            <%= s.current_bookings %>
+                                                        </td>
+                                                        <td data-label="Status">
+                                                            <span class="status status-<%= s.status %>">
+                                                                <%= s.status %>
+                                                            </span>
+                                                        </td>
+                                                        <td data-label="Actions">
+                                                            <a href="/sessions/<%= s.id %>">Edit</a>
+                                                            <form method="POST" action="/sessions/<%= s.id %>/delete"
+                                                                style="display: inline;">
+                                                                <button type="submit"
+                                                                    onclick="return confirm('Delete this session?');">
+                                                                    Delete
+                                                                </button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                    <% }) %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- FORM -->
+                                    <div class="form-container">
+                                        <h2>
+                                            <%= (selectedSession && selectedSession.id) ? "Edit Session"
+                                                : "Create Session" %>
+                                        </h2>
+
+                                        <form method="POST"
+                                            action="/sessions/<%= (selectedSession && selectedSession.id) || '' %>">
+                                            <input type="hidden" name="action"
+                                                value="<%= (selectedSession && selectedSession.id) ? 'update' : 'create' %>">
+
+                                            <div class="form-row">
+                                                <div class="form-group">
+                                                    <label>Activity: *
+                                                        <select name="activity_id" required>
+                                                            <option value="">-- Choose Activity --</option>
+                                                            <% (activities || []).forEach(a=> { %>
+                                                                <option value="<%= a.id %>"
+                                                                    <%=(selectedSession?.activity_id==a.id) ? 'selected'
+                                                                    : '' %>
+                                                                    >
+                                                                    <%= a.name %>
+                                                                </option>
+                                                                <% }) %>
+                                                        </select>
+                                                    </label>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Location: *
+                                                        <select name="location_id" required>
+                                                            <option value="">-- Choose Location --</option>
+                                                            <% (locations || []).forEach(l=> { %>
+                                                                <option value="<%= l.id %>"
+                                                                    <%=(selectedSession?.location_id==l.id) ? 'selected'
+                                                                    : '' %>
+                                                                    >
+                                                                    <%= l.name %>
+                                                                </option>
+                                                                <% }) %>
+                                                        </select>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-row">
+                                                <div class="form-group">
+                                                    <label>Trainer: *
+                                                        <select name="trainer_id" required>
+                                                            <option value="">-- Choose Trainer --</option>
+                                                            <% (trainers || []).forEach(t=> { %>
+                                                                <option value="<%= t.id %>"
+                                                                    <%=(selectedSession?.trainer_id==t.id) ? 'selected'
+                                                                    : '' %>>
+                                                                    <%= t.first_name %>
+                                                                        <%= t.last_name %>
+                                                                </option>
+                                                                <% }) %>
+                                                        </select>
+                                                    </label>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label>Date: *
+                                                        <input type="date" name="date"
+                                                            value="<%= selectedSession?.date || '' %>" required
+                                                            min="<%= new Date().toISOString().split('T')[0] %>">
+                                                    </label>
+                                                </div>
+
+
+                                                <div class="form-row">
+                                                    <div class="form-group">
+                                                        <label>Start time: *
+                                                            <input type="time" name="start_time"
+                                                                value="<%= selectedSession?.start_time ? selectedSession.start_time.substring(0, 5) : '' %>"
+                                                                required>
+                                                        </label>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label>End time: *
+                                                            <input type="time" name="end_time"
+                                                                value="<%= selectedSession?.end_time ? selectedSession.end_time.substring(0, 5) : '' %>"
+                                                                required>
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-row">
+                                                    <div class="form-group">
+                                                        <label>Max capacity: *
+                                                            <input type="number" name="max_capacity"
+                                                                value="<%= selectedSession?.max_capacity ?? 20 %>"
+                                                                min="1" required>
+                                                        </label>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <label>Current bookings:
+                                                            <input type="number" name="current_bookings"
+                                                                value="<%= selectedSession?.current_bookings ?? 0 %>"
+                                                                min="0" readonly>
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group full-width">
+                                                    <label>Status: *
+                                                        <select name="status" required>
+                                                            <option value="scheduled"
+                                                                <%=selectedSession?.status==='scheduled' ? 'selected'
+                                                                : '' %>>Scheduled</option>
+                                                            <option value="ongoing"
+                                                                <%=selectedSession?.status==='ongoing' ? 'selected' : ''
+                                                                %>>Ongoing</option>
+                                                            <option value="completed"
+                                                                <%=selectedSession?.status==='completed' ? 'selected'
+                                                                : '' %>>Completed</option>
+                                                            <option value="cancelled"
+                                                                <%=selectedSession?.status==='cancelled' ? 'selected'
+                                                                : '' %>>Cancelled</option>
+                                                        </select>
+                                                    </label>
+                                                </div>
+
+                                                <div class="form-group full-width">
+                                                    <label>Special notes:
+                                                        <textarea name="special_notes"
+                                                            rows="3"><%= selectedSession?.special_notes || '' %></textarea>
+                                                    </label>
+                                                </div>
+
+                                                <button type="submit" class="btn-submit">
+                                                    <%= (selectedSession && selectedSession.id) ? "Update Session"
+                                                        : "Create Session" %>
+                                                </button>
+
+                                                <% if (selectedSession && selectedSession.id) { %>
+                                                    <a href="/sessions" class="btn-create-new">Create New Session</a>
+
+                                                    <button type="button" class="btn-delete"
+                                                        onclick="if(confirm('Delete this session permanently?')) { document.getElementById('deleteForm').submit(); }">
+                                                        Delete Session
+                                                    </button>
+                                                    <% } %>
+                                        </form>
+
+                                        <!-- Delete -->
+                                        <% if (selectedSession && selectedSession.id) { %>
+                                            <form id="deleteForm" method="POST"
+                                                action="/sessions/<%= selectedSession.id %>" style="display: none;">
+                                                <input type="hidden" name="action" value="delete">
+                                            </form>
+                                            <% } %>
+                                    </div>
+
+                                    <%- include('partials/admin_footer') %>

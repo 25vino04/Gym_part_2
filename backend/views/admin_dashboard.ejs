@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - High Street Gym</title>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+
+<body>
+    <div class="admin-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Admin Panel</h2>
+                <p>Welcome, <%= user.first_name %>
+                </p>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="/admin/dashboard" class="nav-item active">
+                    <span class="icon">📊</span> Dashboard
+                </a>
+                <a href="/admin/users" class="nav-item">
+                    <span class="icon">👥</span> Users
+                </a>
+                <a href="/admin/sessions" class="nav-item">
+                    <span class="icon">📅</span> Sessions
+                </a>
+                <a href="/admin/bookings" class="nav-item">
+                    <span class="icon">📝</span> Bookings
+                </a>
+                <a href="/admin/activities" class="nav-item">
+                    <span class="icon">💪</span> Activities
+                </a>
+                <a href="/admin/locations" class="nav-item">
+                    <span class="icon">📍</span> Locations
+                </a>
+                <a href="/admin/posts" class="nav-item">
+                    <span class="icon">📰</span> Blog Posts
+                </a>
+
+                <hr>
+
+                <a href="/" class="nav-item">
+                    <span class="icon">🏠</span> Back to Site
+                </a>
+                <a href="/logout" class="nav-item logout">
+                    <span class="icon">🚪</span> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1>Dashboard Overview</h1>
+                <p>Manage your gym system</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-info">
+                        <h3>
+                            <%= stats.totalUsers %>
+                        </h3>
+                        <p>Total Users</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-info">
+                        <h3>
+                            <%= stats.totalMembers %>
+                        </h3>
+                        <p>Active Members</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-info">
+                        <h3>
+                            <%= stats.upcomingSessions %>
+                        </h3>
+                        <p>Upcoming Sessions</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">📝</div>
+                    <div class="stat-info">
+                        <h3>
+                            <%= stats.totalBookings %>
+                        </h3>
+                        <p>Total Bookings</p>
+                    </div>
+                </div>
+            </div>
+
+            <section class="quick-actions">
+                <h2>Quick Actions</h2>
+                <div class="actions-grid">
+                    <a href="/users" class="action-card">
+                        <span class="action-icon">➕</span>
+                        <h3>Manage Users</h3>
+                        <p>View and manage all users</p>
+                    </a>
+
+                    <a href="/sessions" class="action-card">
+                        <span class="action-icon">📅</span>
+                        <h3>Manage Sessions</h3>
+                        <p>View and create sessions</p>
+                    </a>
+
+                    <a href="/activities" class="action-card">
+                        <span class="action-icon">💪</span>
+                        <h3>Manage Activities</h3>
+                        <p>View and create activities</p>
+                    </a>
+
+                    <a href="/locations" class="action-card">
+                        <span class="action-icon">📍</span>
+                        <h3>Manage Locations</h3>
+                        <p>View and manage locations</p>
+                    </a>
+
+                    <a href="/bookings" class="action-card">
+                        <span class="action-icon">📝</span>
+                        <h3>Manage Bookings</h3>
+                        <p>View all bookings</p>
+                    </a>
+
+                    <a href="/posts" class="action-card">
+                        <span class="action-icon">📰</span>
+                        <h3>Manage Posts</h3>
+                        <p>View and manage blog posts</p>
+                    </a>
+                </div>
+            </section>
+
+            <section class="recent-activity">
+                <h2>Recent Bookings</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Member</th>
+                                <th>Session</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% recentBookings.forEach(function(booking) { %>
+                                <tr>
+                                    <td>
+                                        <%= booking.member_name %>
+                                    </td>
+                                    <td>
+                                        <%= booking.activity_name %>
+                                    </td>
+                                    <td>
+                                        <%= booking.session_date %>
+                                    </td>
+                                    <td><span class="status <%= booking.status %>">
+                                            <%= booking.status %>
+                                        </span></td>
+                                </tr>
+                                <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+
+</html>

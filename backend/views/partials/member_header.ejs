@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= typeof title !=='undefined' ? title : 'Dashboard' %> - High Street Gym
+    </title>
+    <link rel="stylesheet" href="/css/timetable.css">
+</head>
+
+<body>
+    <header>
+        <nav class="top-nav">
+            <div class="logo">
+                <a href="/">High Street Gym</a>
+            </div>
+            <div class="nav-links">
+                <a href="/timetable" class="nav-btn">Timetable</a>
+                <a href="/blog" class="nav-btn">Blog</a>
+                <% if (user.role==='member' ) { %>
+                    <a href="/member-dashboard" class="nav-btn">Profile</a>
+                    <% } else if (user.role==='trainer' ) { %>
+                        <a href="/trainer-dashboard" class="nav-btn">Profile</a>
+                        <% } else if (user.role==='admin' ) { %>
+                            <a href="/admin/dashboard" class="nav-btn">Admin Panel</a>
+                            <% } %>
+            </div>
+            <div class="user-info">
+                <span>Welcome, <%= user.first_name %></span>
+                <a href="/logout" class="logout-btn">Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <main style="max-width: 1200px; margin: 2rem auto; padding: 2rem;">

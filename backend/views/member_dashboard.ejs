@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Dashboard - High Street Gym</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/member-dashboard.css">
+</head>
+
+<body>
+    <header>
+        <%- include('partials/nav') %>
+    </header>
+
+    <main class="dashboard-container">
+        <div class="page-header">
+            <h1>Welcome, <%= user.first_name %>!</h1>
+            <p>Member Dashboard</p>
+        </div>
+
+        <!-- Profile Info -->
+        <section class="dashboard-section">
+            <h2>My Profile</h2>
+            <div class="profile-grid">
+                <div class="profile-item">
+                    <strong>Name:</strong>
+                    <span>
+                        <%= member.first_name %>
+                            <%= member.last_name %>
+                    </span>
+                </div>
+                <div class="profile-item">
+                    <strong>Email:</strong>
+                    <span>
+                        <%= member.email %>
+                    </span>
+                </div>
+                <div class="profile-item">
+                    <strong>Phone:</strong>
+                    <span>
+                        <%= member.phone || 'Not provided' %>
+                    </span>
+                </div>
+                <div class="profile-item">
+                    <strong>Emergency Contact:</strong>
+                    <span>
+                        <%= member.emergency_contact || 'Not provided' %>
+                    </span>
+                </div>
+                <div class="profile-item full-width">
+                    <strong>Membership:</strong>
+                    <span>
+                        <%= new Date(member.membership_start).toLocaleDateString('en-AU') %> -
+                            <%= new Date(member.membership_end).toLocaleDateString('en-AU') %>
+                    </span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="dashboard-section">
+            <h2>Quick Actions</h2>
+            <div class="actions-grid">
+                <a href="/timetable" class="action-link">
+                    <span class="action-icon">📅</span>
+                    <h3>Book a Class</h3>
+                    <p>View timetable and book sessions</p>
+                </a>
+                <a href="/blog" class="action-link">
+                    <span class="action-icon">📝</span>
+                    <h3>Member Blog</h3>
+                    <p>Share your fitness journey</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- My Bookings -->
+        <section class="dashboard-section">
+            <h2>My Bookings</h2>
+
+            <% if (locals.success) { %>
+                <div class="success-message">✅ Booking cancelled successfully</div>
+                <% } %>
+
+                    <% if (bookings && bookings.length> 0) { %>
+                        <div class="table-container">
+                            <table class="bookings-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Activity</th>
+                                        <th>Location</th>
+                                        <th>Trainer</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% bookings.forEach(function(booking) { var statusClass='status-confirmed' ; if
+                                        (booking.status==='cancelled' ) { statusClass='status-cancelled' ; } else if
+                                        (booking.status==='completed' ) { statusClass='status-completed' ; } %>
+                                        <tr>
+                                            <td data-label="Date">
+                                                <%= new Date(booking.date).toLocaleDateString('en-AU') %>
+                                            </td>
+                                            <td data-label="Time">
+                                                <%= booking.start_time %> - <%= booking.end_time %>
+                                            </td>
+                                            <td data-label="Activity">
+                                                <%= booking.activity_name %>
+                                            </td>
+                                            <td data-label="Location">
+                                                <%= booking.location_name %>
+                                            </td>
+                                            <td data-label="Trainer">
+                                                <%= booking.trainer_name %>
+                                            </td>
+                                            <td data-label="Status">
+                                                <span class="status-badge <%= statusClass %>">
+                                                    <%= booking.status %>
+                                                </span>
+                                            </td>
+                                            <td data-label="Action">
+                                                <% if (booking.status==='confirmed' ) { %>
+                                                    <form method="POST" action="/cancel-booking/<%= booking.id %>"
+                                                        style="display: inline;">
+                                                        <button type="submit" class="cancel-btn"
+                                                            onclick="return confirm('Are you sure you want to cancel this booking?')">
+                                                            Cancel
+                                                        </button>
+                                                    </form>
+                                                    <% } else { %>
+                                                        <span class="no-action">-</span>
+                                                        <% } %>
+                                            </td>
+                                        </tr>
+                                        <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <% } else { %>
+                            <p>No bookings yet. <a href="/timetable">Book a class now!</a></p>
+                            <% } %>
+        </section>
+    </main>
+
+    <footer>
+        <%- include('partials/footer') %>
+    </footer>
+</body>
+
+</html>

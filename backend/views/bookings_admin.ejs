@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookings Management - High Street Gym</title>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+
+<body>
+    <%- include('partials/admin_header', { title: 'Bookings Management' , user: user }) %>
+
+        <div class="page-header">
+            <h1>Bookings Management</h1>
+        </div>
+
+        <!-- Success messages -->
+        <% if (success==='booking_created' ) { %>
+            <div class="success-message">✅ Booking created successfully</div>
+            <% } else if (success==='booking_updated' ) { %>
+                <div class="success-message">✅ Booking updated successfully</div>
+                <% } else if (success==='booking_deleted' ) { %>
+                    <div class="success-message">✅ Booking deleted successfully</div>
+                    <% } %>
+
+                        <!-- Error message -->
+                        <% if (error==='delete_failed' ) { %>
+                            <div class="error-message">❌ Failed to delete booking</div>
+                            <% } %>
+
+                                <!-- FILTERS -->
+                                <div class="filters-container">
+                                    <form method="GET" action="/bookings" class="filters-form">
+                                        <div class="filter-group">
+                                            <label>Status:</label>
+                                            <select name="status">
+                                                <option value="">All Statuses</option>
+                                                <option value="confirmed" <%=locals.filterStatus==='confirmed'
+                                                    ? 'selected' : '' %>>Confirmed</option>
+                                                <option value="cancelled" <%=locals.filterStatus==='cancelled'
+                                                    ? 'selected' : '' %>>Cancelled</option>
+                                                <option value="completed" <%=locals.filterStatus==='completed'
+                                                    ? 'selected' : '' %>>Completed</option>
+                                                <option value="no_show" <%=locals.filterStatus==='no_show' ? 'selected'
+                                                    : '' %>>No Show</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="filter-group">
+                                            <label>Member:</label>
+                                            <select name="member">
+                                                <option value="">All Members</option>
+                                                <% (members || []).forEach(m=> { %>
+                                                    <option value="<%= m.id %>" <%=locals.filterMember==m.id
+                                                        ? 'selected' : '' %>>
+                                                        <%= m.first_name %>
+                                                            <%= m.last_name %>
+                                                    </option>
+                                                    <% }) %>
+                                            </select>
+                                        </div>
+
+                                        <div class="filter-group">
+                                            <label>Session Date:</label>
+                                            <input type="date" name="sessionDate"
+                                                value="<%= locals.filterSessionDate || '' %>">
+                                        </div>
+
+                                        <div class="filter-group">
+                                            <label>Booking Date:</label>
+                                            <input type="date" name="bookingDate"
+                                                value="<%= locals.filterBookingDate || '' %>">
+                                        </div>
+
+                                        <div class="filter-actions">
+                                            <button type="submit" class="btn-filter">Apply Filters</button>
+                                            <a href="/bookings" class="btn-clear">Clear</a>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <!-- TABLE -->
+                                <div class="table-container">
+                                    <table>
+                                        <thead>
+                                            <tr>
+
+                                                <th>Session</th>
+                                                <th>Member</th>
+                                                <th>Status</th>
+                                                <th>Booked at</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% (bookings || []).forEach(b=> { %>
+                                                <tr>
+
+                                                    <td data-label="Session">
+                                                        <% if (b.session_date && b.start_time && b.activity_name) { %>
+                                                            <%= new Date(b.session_date).toLocaleDateString('en-AU') %>
+                                                                <%= b.start_time %> - <%= b.activity_name %>
+                                                                        <% } else { %>
+                                                                            <em style="color: #999;">Session details
+                                                                                unavailable</em>
+                                                                            <% } %>
+                                                    </td>
+                                                    <td data-label="Member">
+                                                        <%= b.member_name || 'Member #' + b.member_id %>
+                                                    </td>
+                                                    <td data-label="Status">
+                                                        <span class="status status-<%= b.status %>">
+                                                            <%= b.status %>
+                                                        </span>
+                                                    </td>
+                                                    <td data-label="Booked at">
+                                                        <%= b.booking_date ? new
+                                                            Date(b.booking_date).toLocaleDateString('en-AU') : new
+                                                            Date(b.created_at).toLocaleDateString('en-AU') %>
+                                                    </td>
+                                                    <td data-label="Actions">
+                                                        <a href="/bookings/<%= b.id %>">Edit</a>
+                                                        <form method="POST" action="/bookings/<%= b.id %>/delete"
+                                                            style="display: inline;"
+                                                            onsubmit="return confirm('Delete this booking?');">
+                                                            <button type="submit"> Delete</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                <% }) %>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- FORM -->
+                                <div class="form-container">
+                                    <h2>
+                                        <%= (selectedBooking && selectedBooking.id) ? "Edit Booking" : "Create Booking"
+                                            %>
+                                    </h2>
+
+                                    <form method="POST"
+                                        action="/bookings/<%= (selectedBooking && selectedBooking.id) || '' %>">
+                                        <input type="hidden" name="action"
+                                            value="<%= (selectedBooking && selectedBooking.id) ? 'update' : 'create' %>">
+
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label>Session: *
+                                                    <select name="session_id" required>
+                                                        <option value="">-- Choose Session --</option>
+                                                        <% (sessions || []).forEach(s=> { %>
+                                                            <option value="<%= s.id %>"
+                                                                <%=(selectedBooking?.session_id==s.id) ? 'selected' : ''
+                                                                %>>
+                                                                <%= s.date %>
+                                                                    <%= s.start_time %> - <%= s.activity_name
+                                                                            || 'Activity #' + s.activity_id %>
+                                                            </option>
+                                                            <% }) %>
+                                                    </select>
+                                                </label>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Member: *
+                                                    <select name="member_id" required>
+                                                        <option value="">-- Choose Member --</option>
+                                                        <% (members || []).forEach(m=> { %>
+                                                            <option value="<%= m.id %>"
+                                                                <%=(selectedBooking?.member_id==m.id) ? 'selected' : ''
+                                                                %>>
+                                                                <%= m.first_name %>
+                                                                    <%= m.last_name %>
+                                                            </option>
+                                                            <% }) %>
+                                                    </select>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group full-width">
+                                            <label>Status: *
+                                                <select name="status" required>
+                                                    <option value="confirmed" <%=selectedBooking?.status==='confirmed'
+                                                        ? 'selected' : '' %>>Confirmed</option>
+                                                    <option value="cancelled" <%=selectedBooking?.status==='cancelled'
+                                                        ? 'selected' : '' %>>Cancelled</option>
+                                                    <option value="completed" <%=selectedBooking?.status==='completed'
+                                                        ? 'selected' : '' %>>Completed</option>
+                                                    <option value="no_show" <%=selectedBooking?.status==='no_show'
+                                                        ? 'selected' : '' %>>No Show</option>
+                                                </select>
+                                            </label>
+                                        </div>
+
+                                        <% if (selectedBooking && selectedBooking.id) { %>
+                                            <div class="form-group full-width">
+                                                <label>Cancellation reason:
+                                                    <textarea name="cancellation_reason" rows="2"
+                                                        placeholder="Optional - only if status is cancelled"><%= selectedBooking?.cancellation_reason || '' %></textarea>
+                                                </label>
+                                            </div>
+
+                                            <div class="form-group full-width">
+                                                <label>Cancelled at:
+                                                    <input type="datetime-local" name="cancelled_at"
+                                                        value="<%= selectedBooking?.cancelled_at || '' %>">
+                                                </label>
+                                            </div>
+
+                                            <div class="form-group full-width">
+                                                <label>Notes:
+                                                    <textarea name="notes" rows="3"
+                                                        placeholder="Additional notes about this booking"><%= selectedBooking?.notes || '' %></textarea>
+                                                </label>
+                                            </div>
+                                            <% } %>
+
+                                                <button type="submit" class="btn-submit">
+                                                    <%= (selectedBooking && selectedBooking.id) ? "Update Booking"
+                                                        : "Create Booking" %>
+                                                </button>
+
+                                                <% if (selectedBooking && selectedBooking.id) { %>
+                                                    <a href="/bookings" class="btn-create-new">Create New Booking</a>
+                                                    <% } %>
+                                    </form>
+                                </div>
+
+                                <%- include('partials/admin_footer') %>
+</body>
+
+</html>

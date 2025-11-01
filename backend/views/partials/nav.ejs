@@ -1,0 +1,55 @@
+<nav class="top-nav" role="navigation" aria-label="Main">
+    <div class="logo">
+        <a href="/">High Street Gym</a>
+    </div>
+
+
+    <button class="mobile-menu-toggle" type="button" aria-label="Toggle menu" aria-expanded="false"
+        aria-controls="primary-links">
+        <span class="burger" aria-hidden="true">
+            <span></span><span></span><span></span>
+        </span>
+        <span class="label">Menu</span>
+    </button>
+
+    <div class="nav-links" id="primary-links">
+        <a href="/timetable" class="nav-btn">Timetable</a>
+        <a href="/blog" class="nav-btn">Blog</a>
+
+        <% if (locals.user) { %>
+            <% if (user.role==='member' ) { %>
+                <a href="/member-dashboard" class="nav-btn">Profile</a>
+                <% } else if (user.role==='trainer' ) { %>
+                    <a href="/trainer-dashboard" class="nav-btn">Profile</a>
+                    <% } else if (user.role==='admin' ) { %>
+                        <a href="/admin/dashboard" class="nav-btn">Admin Panel</a>
+                        <% } %>
+                            <% } %>
+    </div>
+
+    <% if (locals.user) { %>
+        <a href="/logout" class="login-btn">Logout</a>
+        <% } else { %>
+            <a href="/login" class="login-btn">Login/Sign up</a>
+            <% } %>
+</nav>
+
+<script>
+
+    (() => {
+        const script = document.currentScript;
+        const nav = script?.previousElementSibling?.matches?.('nav.top-nav')
+            ? script.previousElementSibling
+            : document.querySelector('nav.top-nav');
+        if (!nav) return;
+
+        const btn = nav.querySelector('.mobile-menu-toggle');
+        if (!btn) return;
+
+        btn.addEventListener('click', () => {
+            const expanded = btn.getAttribute('aria-expanded') === 'true';
+            btn.setAttribute('aria-expanded', String(!expanded));
+            nav.classList.toggle('open');
+        });
+    })();
+</script>
